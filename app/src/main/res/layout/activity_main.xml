@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context="com.alexurangareyes.myrealm.MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello World!"
+        android:id="@+id/textView" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/nomb_editText"
+ />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Agregar"
+        android:id="@+id/button_add"
+        android:onClick="onAddClick"
+        android:layout_marginTop="@dimen/activity_horizontal_margin" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Borrar Por Id"
+        android:id="@+id/button_remove"
+        android:onClick="onRemoveClick"
+        android:layout_marginTop="@dimen/activity_horizontal_margin" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Delete all matches"
+        android:id="@+id/button_removeAll"
+        android:onClick="onRemoveAllClick"
+        android:layout_marginTop="@dimen/activity_horizontal_margin" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Read All"
+        android:id="@+id/button_ReadAll"
+        android:onClick="onReadAllClick"
+        android:layout_marginTop="@dimen/activity_horizontal_margin" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Synchronize Database"
+        android:id="@+id/button_synDataBase"
+        android:onClick="onReadSyncDataBase"
+        android:layout_marginTop="@dimen/activity_horizontal_margin" />
+
+
+</LinearLayout>
