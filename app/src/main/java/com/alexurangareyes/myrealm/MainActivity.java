@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.alexurangareyes.myrealm.model.Person;
+import com.alexurangareyes.myrealm.realm.RealmController;
 import com.kosalgeek.asynctask.AsyncResponse;
 import com.kosalgeek.asynctask.EachExceptionsHandler;
 import com.kosalgeek.asynctask.PostResponseAsyncTask;
@@ -19,7 +21,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 //http://www.androidhive.info/2016/05/android-working-with-realm-database-replacing-sqlite-core-data/
@@ -32,7 +33,10 @@ import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity {
 
+
     private Realm mRealm;
+    private RealmResults<Person> results;
+
     @BindView(R.id.nomb_editText)
     EditText username;
     //10.0.3.2 is the alias IP for GenyMotion
@@ -44,12 +48,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RealmConfiguration config = new RealmConfiguration.Builder(this)
-                .name("myrealm.realm")
-                .schemaVersion(1)
-                .build();
-        // Use the config
-        mRealm = Realm.getInstance(config);
+        //RealmController.with(this).refresh();
+        //RealmController.with(this).getBooks();
+        //get realm instance
+        this.mRealm = RealmController.with(this.getApplication()).getRealm();
+
+        results = RealmController.with(this.getApplication()).getPersons();
 
         ButterKnife.bind(this);
     }
@@ -59,9 +63,11 @@ public class MainActivity extends AppCompatActivity {
 
         long nextID;
 
-        if(!mRealEmpty()) {
+        if(!RealmController.with(this.getApplication()).mRealEmpty()) {
             // increatement index
-            nextID = (mRealm.where(Person.class).max("id").longValue() + 1);
+            //nextID = (mRealm.where(Person.class).max("id").longValue() + 1);
+            nextID = RealmController.getInstance().incId();
+
         }
         else{
             nextID = 1;
@@ -86,15 +92,15 @@ public class MainActivity extends AppCompatActivity {
 
         mRealm.beginTransaction();
 
-        RealmResults<Person> persons = mRealm.where(Person.class).equalTo("id",Integer.parseInt(username.getText().toString())).findAll();
+        if(!RealmController.with(this.getApplication()).mRealEmpty()) {
 
-        if(!mRealEmpty()) {
+            Person person = RealmController.getInstance().getPerson(Integer.parseInt(username.getText().toString()));
+            person.deleteFromRealm();
+            Toast.makeText(this.getApplicationContext(),"Person Removed", Toast.LENGTH_SHORT).show();
 
-            for(int i = persons.size() - 1; i >= 0; i--) {
-                persons.get(i).deleteFromRealm();
-                Toast.makeText(this.getApplicationContext(),"Person Removed", Toast.LENGTH_SHORT).show();
-            }
-
+        }else{
+            //Toast.makeText(this.getApplicationContext(),"Person not found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.getApplicationContext(),"mRealm is Empty", Toast.LENGTH_SHORT).show();
         }
 
         mRealm.commitTransaction();
@@ -103,11 +109,13 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.button_ReadAll)
     public void onReadAllClick() {
 
-        RealmResults<Person> results = mRealm.where(Person.class).findAll();
 
-        if(!mRealEmpty()) {
+        //RealmResults<Person> results = RealmController.with(this.getApplication()).getPersons();
 
-            for (int i = 0; i < getResults().size(); i++) {
+
+        if(!RealmController.with(this.getApplication()).mRealEmpty()) {
+
+            for (int i = 0; i <results.size(); i++) {
                 Person u = results.get(i);
                 Toast.makeText(this.getApplicationContext(),"" + u, Toast.LENGTH_SHORT).show();
             }
@@ -122,9 +130,9 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.button_synDataBase)
     public void onReadSyncDataBase() {
 
-        RealmResults<Person> results = mRealm.where(Person.class).findAll();
+       // RealmResults<Person> results = mRealm.where(Person.class).findAll();
 
-        if(!mRealEmpty()) {
+        if(!RealmController.with(this.getApplication()).mRealEmpty()) {
 
             for (int i = 0; i < results.size(); i++) {
 
@@ -169,6 +177,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
+        else{
+            Toast.makeText(this.getApplicationContext(),"mRealm is Empty", Toast.LENGTH_SHORT).show();
+        }
 
 
     }
@@ -178,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        if(!mRealEmpty()) {
+        if(!RealmController.with(this.getApplication()).mRealEmpty()) {
 
 
             mRealm.executeTransaction(new Realm.Transaction() {
@@ -186,7 +197,8 @@ public class MainActivity extends AppCompatActivity {
                 public void execute(Realm realm) {
 
                     // Delete all matches
-                    getResults().deleteAllFromRealm();
+                    results.deleteAllFromRealm();
+                    //Toast.makeText(this.getApplicationContext(),"mRealm is Total Empty", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -197,31 +209,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
-    public boolean mRealEmpty(){
-
-        if(!getResults().isEmpty()) {
-
-            return false;
-        }
-        else {
-            Toast.makeText(this.getApplicationContext(),"mRealm is Empty", Toast.LENGTH_SHORT).show();
-            return true;
-
-        }
-    }
-
-    public RealmResults getResults(){
-
-        final RealmResults<Person> results = mRealm.where(Person.class).findAll();
-
-        return results;
-
-    }
-
-
-
-
 
     @Override
     public void onDestroy() {

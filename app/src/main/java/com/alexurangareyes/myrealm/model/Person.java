@@ -1,5 +1,8 @@
-package com.alexurangareyes.myrealm;
+package com.alexurangareyes.myrealm.model;
 
+/**
+ * Created by alexurangareyes on 7/4/16.
+ */
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
